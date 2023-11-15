@@ -62,5 +62,38 @@ namespace Full_GRASP_And_SOLID
 
             return result;
         }
+        public int GetCookTime()
+        { 
+             int totalTime = 0;
+
+        foreach (BaseStep step in steps){
+            totalTime += step.Time;
+        }
+
+        return totalTime;
+
+        }
+        public bool Cooked { get; private set; } = false;
+
+        private class RecipeAdapter : TimerClient {
+            Recipe Recipe;
+
+            public RecipeAdapter (Recipe recipe) {
+                this.Recipe = recipe;
+            }
+            public void TimeOut() {
+                this.Recipe.Cooked = true;
+            }
+        }
+
+        public void Cook() {
+            int time = this.GetCookTime() * 1000;
+
+            CountdownTimer timer = new CountdownTimer();
+            RecipeAdapter adapter = new RecipeAdapter(this);
+            timer.Register(time, adapter);
+
+            Cooked = true;
+        }
     }
 }
